@@ -1,3 +1,11 @@
+<div style="width: 100%; text-align: center;">
+  <img src="images/banner.png" 
+       alt="Amrita Scool of Artificial Intelligence" 
+       style="width: 100%; height: auto; max-width: 1000px; display: block; margin: 0 auto;">
+</div>
+
+
+
 # Amrita Vishwa Vidyapeetham — Doctoral Document LaTeX Template
 
 A modular, plug-and-play LaTeX template for **PhD Thesis Proposals, Synopses,
