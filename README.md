@@ -143,3 +143,11 @@ gracefully shows placeholder text if the file is missing.
 
 **Missing `ifthen` package:** Add `\usepackage{ifthen}` before loading
 `styles/configuration.tex` (already done in both driver files).
+
+## Reporting Issues
+
+Found a bug or formatting error?  
+[Open a bug report](../../issues/new?template=bug_report.md) or  
+[Request a feature](../../issues/new?template=feature_request.md)
+
+[![GitHub Issues](https://img.shields.io/github/issues/sijuswamyresearch/amrita-thesis-template)](../../issues)
