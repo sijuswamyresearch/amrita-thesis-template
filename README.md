@@ -1,7 +1,7 @@
 # Amrita Vishwa Vidyapeetham — Doctoral Document LaTeX Template
 
 A modular, plug-and-play LaTeX template for **PhD Thesis Proposals, Synopses,
-Project Reports, and Final Theses** at Amrita Vishwa Vidyapeetham.
+Project Reports, and Final Thesis** at Amrita Vishwa Vidyapeetham.
 
 ---
 
