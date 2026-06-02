@@ -33,7 +33,7 @@ Everything else — title page, certificate, declaration, abstract header — is
 
 | File | What to edit |
 |------|-------------|
-| `frontmatter/abstract.tex` | Abstract body |
+| `frontmatter/abstract-body.tex` | Abstract body |
 | `frontmatter/acknowledgements.tex` | Acknowledgements |
 | `frontmatter/abbreviations.tex` | Your acronyms |
 | `chapters/ch01-introduction.tex` | Chapter 1 |
