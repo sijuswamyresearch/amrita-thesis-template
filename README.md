@@ -70,6 +70,7 @@ amrita-thesis-template/
 ├── main.tex                   ← Thesis / Synopsis / Report driver
 ├── proposal-main.tex          ← Thesis Proposal driver
 ├── synopsis-main.tex          ← synopsis driver
+├── form7a-abstract.tex        ← abstract generator as per guidelines (form 7a)
 ├── doc-info.tex               ← ★ YOUR PERSONAL INFO (edit only this)
 ├── references.bib             ← BibTeX bibliography
 │
