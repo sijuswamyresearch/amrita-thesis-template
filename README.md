@@ -27,7 +27,7 @@ Everything else — title page, certificate, declaration, abstract header — is
 | Final Thesis        | `main.tex`              |
 | Thesis Proposal     | `proposal-main.tex`     |
 | Synopsis            | `synopsis-main.tex`  |
-| Project Report      | `main.tex` (set `\DocType{report}`)  |
+| Project Report      | `main.tex` (replace `\newcommand{\DocType}{thesis}` with `\newcommand{\DocType}{report}`)  |
 
 ### 3. Write your content
 
