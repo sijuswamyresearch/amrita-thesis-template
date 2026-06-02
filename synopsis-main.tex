@@ -1,0 +1,92 @@
+% ============================================================
+%  synopsis-main.tex
+%  Amrita Vishwa Vidyapeetham — Ph.D. Synopsis driver
+%  Compile: pdflatex synopsis-main → bibtex synopsis-main
+%           → pdflatex synopsis-main → pdflatex synopsis-main
+% ============================================================
+
+\documentclass[12pt,a4paper]{article}
+\newcommand{\DocType}{synopsis}
+\input{doc-info}
+\usepackage{ifthen}
+\usepackage[
+a4paper,
+top    = 1.0in,
+bottom = 1.0in,
+left   = 1.25in,
+right  = 1.0in
+]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+\usepackage[
+colorlinks = true,
+citecolor  = blue,
+linkcolor  = black,
+urlcolor   = blue
+]{hyperref}
+\usepackage{url}
+
+% Section formatting
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\newcommand{\signaturebox}[2]{%
+	\begin{tabular}{@{}l@{}}
+		\rule{5.5cm}{0.4pt}\\[0.2cm]
+		\textbf{#1}\\#2
+\end{tabular}}
+
+% ============================================================
+\begin{document}
+	% ============================================================
+	
+	% ---- TITLE PAGE --------------------------------------------
+	\pagenumbering{gobble}
+	\input{frontmatter/titlepage}          % DocType=synopsis triggers synopsis layout
+	
+	% ---- FRONT MATTER ------------------------------------------
+	\pagenumbering{roman}
+	\setcounter{page}{1}
+	
+	\input{frontmatter/abstract}           % reuses frontmatter/abstract-body.tex
+	\newpage
+	
+	\tableofcontents
+	\newpage
+	
+	% ---- SYNOPSIS BODY -----------------------------------------
+	\pagenumbering{arabic}
+	\setcounter{page}{1}
+	
+	\input{chapters/synopsis-introduction}
+	\input{chapters/synopsis-litreview}
+	\input{chapters/synopsis-gaps}
+	\input{chapters/synopsis-objectives}
+	\input{chapters/synopsis-methodology}
+	\input{chapters/synopsis-results}
+	\input{chapters/synopsis-contributions}
+	\input{chapters/synopsis-publications}
+	\input{chapters/synopsis-timeline}
+	
+	% ---- BIBLIOGRAPHY ------------------------------------------
+	\newpage
+	\bibliography{references}
+	
+\end{document}

@@ -1,0 +1,39 @@
+% chapters/proposal-introduction.tex
+% Replace the content below with your own text.
+
+\section{Introduction}
+\label{sec:introduction}
+
+Medical imaging is essential for modern diagnosis, treatment planning, and disease monitoring. X-ray and computed tomography (CT) are the most widely used modalities because they are fast, accessible, and cost-effective. In low-income countries with limited access to MRI or ultrasound, X-ray remains the primary diagnostic tool for conditions ranging from fractures to pneumonia.
+
+However, image quality is often degraded during acquisition. This reduces diagnostic accuracy and can lead to missed findings, false positives, or unnecessary repeat scans. Poor image quality also forces clinicians to request additional views or higher radiation doses, increasing patient risk.
+
+The two main types of degradation are quantum noise and motion blur.
+
+Quantum noise occurs in low-dose X-ray protocols. When the number of photons reaching the detector is limited, random fluctuations appear. These fluctuations follow a Poisson distribution. The noise is signal-dependent: dense structures such as bone suffer more relative noise than soft tissue. This is why bone edges often appear grainy in low-dose chest X-rays.
+
+Motion blur occurs when patients breathe, their hearts beat, or they move involuntarily. This creates spatially varying blur that reduces the sharpness of anatomical boundaries. In chest CT, breathing motion can create streak artefacts that obscure lung nodules.
+
+Classical restoration methods such as Wiener filtering and total variation regularisation attempt to reverse these degradations. They assume that blur is uniform across the image and that noise follows a simple statistical model. These assumptions fail in medical imaging, where motion creates complex, non-uniform patterns and quantum noise is signal-dependent.
+
+Deep learning (DL) methods have become the standard for image restoration. U-Net and ResNet architectures learn to map degraded inputs to clean outputs directly from data. For denoising, models such as DnCNN \citep{zhang2017beyond}, RIDNet \citep{anwar2019real}, CBDNet \citep{guo2019toward}, and X-ReCNN \citep{jin2019chest} have been proposed. For deblurring, models such as DeblurGAN~\citep{kupyn2019deblurgan} and multi-scale convolutional networks have been developed.
+
+However, DL methods have their own limitations.
+
+First, standard loss functions such as mean absolute error minimise pixel-wise differences but do not explicitly preserve edges. As a result, denoised images often appear smooth and waxy, with fine details such as bone trabeculae and lung markings erased.
+
+Second, most activation function (AFs) such as Rectified Linear Units (ReLU) apply the same non-linearity to every spatial location~\citep{nair2010rectified}. They cannot distinguish between anatomical edges that should be preserved and noise that should be suppressed.
+
+Third, even models that incorporate physics during training are optimised for average performance over a dataset. A model that works well on average may still produce visible artefacts on a specific patient image.
+
+Fourth, standard loss functions provide no control over gradient fidelity. We formally prove this as the Sobolev Gap: a network can achieve arbitrarily low pixel error while having arbitrarily large gradient errors.
+
+This thesis addresses these limitations through a three-phase investigation.
+
+In Phase I, we developed X-GAN, a physics-informed generative adversarial network for chest X-ray denoising~\citep{siju2026xgan}. X-GAN uses a U-Net ~\citep{ronneberger2015unet} generator with an edge attention mechanism that explicitly preserves anatomical boundaries. A hybrid loss function combines pixel fidelity, edge preservation, and structural similarity. X-GAN achieves a peak signal-to-noise ratio of 36.48 dB and an edge preservation index of 0.721 with only 2.17 million parameters.
+
+In Phase II, we proposed SAGA, a spatially adaptive gated AF for medical image deblurring~\citep{siju2026saga}. Unlike standard AFs such as ReLU, SAGA computes its output based on local spatial context. It uses a learnable gating mechanism to decide where to sharpen edges and where to suppress noise. SAGA outperforms six existing AFs across four network architectures, improving PSNR by 6.3 dB on average over ReLU.
+
+In Phase III, we plan to develop a test-time refinement framework called Viveka and a Sobolev-regularised loss function called ADL\(_1\) with an attention-guided U-Net architecture. Viveka will apply physics-based constraints directly at inference time without modifying network weights. The ADL\(_1\) loss will provide mathematical guarantees on edge preservation.
+
+The remainder of this thesis proposal is organised as follows. Section~\ref{sec:bs} presents background study and Section \ref{sec:lr} provides the details of literature review. Section~\ref{sec:rg} identifies research gaps and states the problem. Section~\ref{sec:rq} lists problem statements. Section~\ref{sec:ro} describes research objectives. Sections~\ref{sec:xgan} and \ref{sec:saga} present completed work on X-GAN and SAGA. Section~\ref{sec:phase3} describes planned work on Viveka and ADL\(_1\). Sections~\ref{sec:ec} to \ref{sec:cp} present expected contributions, publications, and completion plan.

@@ -1,0 +1,120 @@
+% chapters/proposal-phase3.tex
+% Replace the content below with your own text.
+
+\section{Remaining Work – Phase III}
+\label{sec:phase3}
+\subsection{Overview}
+
+Phase III has two components. The first is Viveka, a test-time refinement framework that applies physics-based constraints directly to denoised images. The second is a Sobolev-regularised loss function called ADL\(_1\) with an attention-guided U-Net architecture called AG-UNet. Both components have been designed in detail. Preliminary experiments have been conducted. Manuscripts are in preparation.
+
+\subsection{Phase III-A: Viveka – test-time refinement}
+
+\subsubsection{Motivation}
+
+Even physics-informed models like X-GAN are trained to minimise average error over a dataset. A model that works well on average may still produce visible artefacts on a specific patient image. Viveka addresses this by applying additional constraints at test time, without modifying the network weights.
+
+\subsubsection{Methodology}
+
+Viveka performs a single-pass deterministic refinement in four steps.
+
+First, it decomposes the image into three anatomical zones based on X-ray attenuation coefficients: bone, lung, and background. Bone receives strong edge enhancement. Lung receives moderate enhancement. Background receives no enhancement.
+
+Second, it extracts fine details using blockwise discrete cosine transform (DCT) filtering. It retains coefficients that exceed physics-informed thresholds. Cycle spinning reduces blocking artefacts.
+
+Third, it computes an edge protection map that identifies anatomical boundaries. It also computes an uncertainty map that identifies regions where the base denoiser may have introduced artefacts.
+
+Fourth, it fuses the base denoiser output with the DCT-extracted details using a weight map that combines anatomical zones, adaptive gains, edge protection, and uncertainty guidance.
+
+\subsubsection{Preliminary results}
+
+We evaluated Viveka on 50 genuinely noisy chest X-rays from the CheXpert dataset. We tested it with five base denoisers: X-GAN, RIDNet, CBDNet, X-ReCNN, and CGAN.
+
+For over-smoothed models such as RIDNet, Viveka reduced NIQE from 25.25 to 6.38, a 75\% improvement. It restored edge density from 0.008 to 0.150. It recovered GLCM entropy from zero to 5.84, which is within 5\% of the noisy reference value of 5.77.
+
+Viveka processes a \(256 \times 256\) image in 0.6 to 0.9 seconds on a standard CPU. It does not require a GPU. It produces interpretable difference maps that show exactly where the image was enhanced (blue) and where noise was suppressed (red).
+\subsection{Phase III-B: ADL1 loss and AG-UNet}
+
+\subsubsection{Motivation}
+
+Standard loss functions such as MAE minimise pixel-wise error but provide no control over gradients. We proved mathematically that for any small pixel error, there exist images with arbitrarily large gradient errors. We call this the Sobolev Gap. The ADL\(_1\) loss closes this gap by explicitly penalising gradient errors.
+
+\subsubsection{Theoretical foundation}
+
+\textbf{Theorem 1 (Sobolev gap):} For any \(\epsilon > 0\), there exist perturbations \(\hat{Y}_\epsilon\) such that:
+
+\[
+\|\hat{Y}_\epsilon - Y\|_{L^1} < \epsilon \quad \text{but} \quad \|\nabla \hat{Y}_\epsilon - \nabla Y\|_{L^1} > \frac{1}{\epsilon}
+\]
+
+This means that a network can achieve arbitrarily low MAE while having arbitrarily large edge errors.
+
+\textbf{Theorem 2 (Gradient convergence):} If the ADL\(_1\) loss is small, then the gradients of the prediction are close to the gradients of the ground truth. Formally, minimising ADL\(_1\) guarantees convergence in the Sobolev space \(W^{1,1}\).
+
+The ADL\(_1\) loss is defined as:
+
+\[
+\mathcal{L}_{\text{ADL1}}(\hat{Y},Y) = \mathbb{E}\left[\|\hat{Y} - Y\|_1 + \lambda_G \sum_{s=1}^{S} w_s \| \mathcal{G}_s(\hat{Y}) - \mathcal{G}_s(Y) \|_1\right]
+\]
+
+where \(\mathcal{G}_s\) computes gradients at multiple scales.
+
+\subsubsection{Architecture: AG-UNet}
+
+The Attention-Guided U-Net (AG-UNet) modifies standard U-Net in two ways.
+
+First, it replaces standard skip connections with Edge-Weighted Channel Attention (EWCA) modules. These modules use the gradient of the input image as a spatial gate. They filter out background noise before features reach the decoder.
+
+Second, it replaces standard convolutional layers with Multi-Scale Feature Blocks (MSFB) that use parallel dilated convolutions to capture context at multiple scales.
+
+\subsubsection{Preliminary results}
+
+We evaluated the ADL\(_1\) loss and AG-UNet on chest CT and osteoporosis X-ray datasets.
+
+Table~\ref{tab:adl1} shows the impact of the loss function on the simple U-Net architecture.
+
+\begin{table}[H]
+	\centering
+	\caption{Impact of loss function on edge preservation (EPI)}
+	\label{tab:adl1}
+	\begin{tabular}{lcc}
+		\toprule
+		Loss Function & CT EPI & Bone EPI \\
+		\midrule
+		MAE & 0.121 & 0.121 \\
+		ADL\(_1\) & 0.659 & 0.210 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Using ADL\(_1\) improves EPI by a factor of five on CT data and nearly doubles it on bone data.
+
+Table~\ref{tab:agunet} compares AG-UNet with baseline architectures.
+
+\begin{table}[H]
+	\centering
+	\caption{Architecture comparison on osteoporosis dataset}
+	\label{tab:agunet}
+	\begin{tabular}{lccc}
+		\toprule
+		Model & PSNR (dB) & EPI & FID \\
+		\midrule
+		U-Net & 38.12 & 0.120 & 66.21 \\
+		Attention U-Net & 38.77 & 0.143 & 68.40 \\
+		EDSR & 40.10 & 0.212 & 35.48 \\
+		\textbf{AG-UNet} & 39.96 & \textbf{0.370} & \textbf{20.42} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+EDSR achieves the highest PSNR by aggressively smoothing the background. But its EPI is low, meaning it loses fine trabecular details. AG-UNet achieves 74.5\% higher EPI and 42\% lower FID, indicating better preservation of bone structure.
+
+\subsection{Expected outcomes of phase III}
+
+We expect Viveka to provide a model-agnostic test-time refinement that works with any denoiser. It will be fast, interpretable, and require no retraining.
+
+We expect the ADL\(_1\) loss and AG-UNet to provide a mathematically grounded framework for deblurring that guarantees edge preservation. The Sobolev regularisation will prevent the smoothing artefacts that plague standard pixel-wise losses.
+
+\subsection{Publication plan}
+
+Manuscripts describing Viveka and the ADL\(_1\)/AG-UNet framework are in preparation. We plan to submit Viveka to \textit{Medical Image Analysis} or \textit{IEEE Transactions on Medical Imaging}. We plan to submit ADL\(_1\)/AG-UNet to \textit{IEEE Transactions on Pattern Analysis and Machine Intelligence} or \textit{IEEE Transactions on Image Processing}.
+

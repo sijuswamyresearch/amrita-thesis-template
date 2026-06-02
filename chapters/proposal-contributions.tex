@@ -1,0 +1,20 @@
+% chapters/proposal-contributions.tex
+% Replace the content below with your own text.
+
+\section{Expected Contributions to the Field}
+\label{sec:ec}
+\subsection{Theoretical contributions}
+
+We have proved the existence of the Sobolev Gap in medical image restoration, showing that pixel-wise losses cannot guarantee edge preservation. We have formulated the ADL\(_1\) loss that closes this gap and guarantees convergence in Sobolev space. We have proved that SAGA has desirable properties including non-saturation, gradient stability, and spatial adaptation.
+
+\subsection{Architectural contributions}
+
+X-GAN is a lightweight physics-informed GAN for chest X-ray denoising with only 2.17 million parameters. SAGA is a drop-in AF that improves deblurring performance across multiple architectures. AG-UNet introduces gradient-guided attention for edge-preserving restoration.
+
+\subsection{Practical contributions}
+
+X-GAN improves downstream classification accuracy from 54.55\% to 79.52\%, demonstrating clinical utility. SAGA improves PSNR by 6.3 dB on average over ReLU. Viveka processes images in under one second on a CPU and produces interpretable difference maps. The ADL\(_1\) loss prevents the waxy smoothing that makes standard denoisers clinically unacceptable.
+
+\subsection{Social contribution}
+
+By enabling effective denoising at lower radiation doses, this research can reduce patient exposure to X-rays. By preserving fine anatomical details, it can improve diagnostic accuracy for conditions such as osteoporosis and lung nodules. By providing interpretable outputs, it can build trust between clinicians and AI systems.

@@ -1,0 +1,61 @@
+% ============================================================
+%  form7a-abstract.tex
+%  Form 7(a) — Abstract submission form
+%  Amrita Vishwa Vidyapeetham
+%  Compile independently:  pdflatex form7a-abstract
+% ============================================================
+
+\documentclass[12pt,a4paper]{article}
+\input{doc-info}
+\usepackage[
+a4paper,
+top    = 1.0in,
+bottom = 1.0in,
+left   = 1.25in,
+right  = 1.0in
+]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{ifthen}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\onehalfspacing
+\usepackage[hidelinks]{hyperref}
+\pagestyle{plain}
+
+\begin{document}
+	
+	% ---- Header ------------------------------------------------
+	\begin{center}
+		{\large\bfseries 7(a) --- Abstract}
+	\end{center}
+	
+	\vspace{0.8cm}
+	
+	% ---- Name and title only -----------------------------------
+	\noindent\textbf{Name:} \AuthorName\\[0.5cm]
+	\noindent\textbf{Thesis Title:} \DocTitle
+	
+	\vspace{0.6cm}
+	%\noindent\rule{\textwidth}{0.4pt}
+	%\vspace{0.4cm}
+	
+	% ---- Abstract body -----------------------------------------
+	\input{frontmatter/abstract-body}
+	
+	\vspace{0.4cm}
+	%\noindent\rule{\textwidth}{0.4pt}
+	
+	\vfill
+	
+	% ---- Signature block ---------------------------------------
+	\noindent
+	\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}r@{}}
+		\rule{5.5cm}{0.4pt} & \rule{5.5cm}{0.4pt}\\[1.5cm]
+		\textbf{\SupervisorName} & Date
+		
+	\end{tabular*}
+	
+\end{document}

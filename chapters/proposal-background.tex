@@ -1,0 +1,86 @@
+% chapters/proposal-background.tex
+% Replace the content below with your own text.
+
+\section{Background}
+\label{sec:background}
+
+% Your content here.\section{Background Study}
+\label{sec:bs}
+
+\subsection{Physics of X-ray imaging}
+
+The formation of an X-ray image follows the Beer-Lambert law \citep{bushberg2011essential}. The intensity at the detector is given by:
+
+\[
+I(x) = I_0 \exp\left(-\int_0^L \mu(s,x) ds\right)
+\]
+
+where \(\mu(s,x)\) is the spatially varying attenuation coefficient. Different tissues attenuate X-rays differently. Bone, with an attenuation coefficient of approximately 0.3 to 0.5 cm\(^{-1}\) at diagnostic energies, creates sharp intensity discontinuities. Lung parenchyma, with an attenuation coefficient of approximately 0.02 to 0.05 cm\(^{-1}\), requires moderate enhancement to reveal fine vasculature \citep{bushberg2011essential}. Background regions, where attenuation is negligible, contain only quantum noise.
+
+Photon arrival follows a Poisson distribution, making the noise signal-dependent \citep{maier2018medical}. The observed intensity \(I_{\text{obs}}\) is a random variable:
+
+\[
+P(I_{\text{obs}}(x) | I(x)) = \frac{(I(x))^{I_{\text{obs}}(x)} \exp(-I(x))}{I_{\text{obs}}(x)!}
+\]
+
+The signal-to-noise ratio is proportional to \(\sqrt{I(x)}\), meaning dense structures such as bone suffer proportionally more relative noise than soft tissue \citep{bushberg2011essential}. This is why denoising chest X-rays is particularly challenging in bone-rich regions, as addressed by our X-GAN work \citep{siju2026xgan}.
+
+\subsection{Physics of CT}
+
+CT imaging acquires X-ray projections from multiple angles around the patient. The sinogram \(p(\theta, r)\) records the line integrals of attenuation coefficients \citep{bushberg2011essential}:
+
+\[
+p(\theta, r) = \int_{-\infty}^{\infty} \mu(x, y) ds
+\]
+
+where \(\theta\) is the projection angle and \(r\) is the detector position. The image is reconstructed using filtered back-projection or iterative methods \citep{maier2018medical}. Noise in CT follows a similar Poisson-Gaussian mixture as X-ray, but the reconstruction process can amplify noise and create streak artefacts \citep{jin2017deep}.
+
+For our CT experiments, we used chest CT scans from public datasets \citep{syed2024medical}. The degradation in CT images is typically caused by patient motion during breath-holding or cardiac pulsation, creating motion blur that is spatially varying. This forms the basis for evaluating our SAGA AF \citep{siju2026saga} and the planned ADL\(_1\) loss.
+
+\subsection{Physics of dual-energy X-ray absorptiometry (DXA)}
+
+DXA is used for osteoporosis assessment. Two X-ray energies (typically 40 keV and 80 keV) are used to separate bone and soft tissue \citep{bushberg2011essential}. The bone mineral density is calculated from the attenuation ratios. DXA images contain sparse, high-frequency trabecular bone structures against a dark background \citep{wani2021knee}. This modality is challenging for deblurring because the diagnostic information is carried by fine bone struts that are easily smoothed by standard denoising methods, a problem addressed by our SAGA work \citep{siju2026saga} and the planned AG-UNet architecture.
+
+\subsection{Image degradation models}
+
+In medical imaging, the observed degraded image \(y\) is modelled as \citep{jin2017deep}:
+
+\[
+y = k * x + n
+\]
+
+where \(x\) is the clean image, \(k\) is a blur kernel, \(*\) denotes convolution, and \(n\) is additive noise.
+
+For our experiments, we used three types of blur to simulate realistic acquisition artefacts \citep{nah2017deep, kupyn2019deblurgan}:
+
+\noindent\textbf{Gaussian blur:} Models sensor noise and optical imperfections. The kernel is defined as:
+
+\[
+k_{\text{Gaussian}}(u,v) = \frac{1}{2\pi\sigma^2} \exp\left(-\frac{u^2 + v^2}{2\sigma^2}\right)
+\]
+
+We used \(\sigma\) values from 1.0 to 5.0 pixels.
+
+\noindent\textbf{Motion blur:} Models patient movement during acquisition. The kernel is a line segment of length \(L\) pixels at angle \(\theta\). We used kernel lengths 9, 15, and 21 pixels.
+
+\noindent\textbf{Defocus blur:} Models images captured outside the focal plane. The kernel is a disk of radius \(r\). We used radii from 2 to 5 pixels.
+
+For denoising, we used Poisson noise to simulate low-dose acquisitions \citep{siju2026xgan}:
+
+\[
+I_{\text{noisy}} \sim \text{Poisson}(\lambda \cdot I_{\text{clean}})
+\]
+
+where \(\lambda\) is the peak photon parameter set to 1000 in our X-GAN and Viveka experiments \citep{siju2026xgan}.
+
+\subsection{Sobolev spaces for image restoration}
+
+The Sobolev space \(W^{1,1}(\Omega)\) couples pixel intensity with local geometry through the norm \citep{adams2003sobolev, evans2010partial}:
+
+\[
+\|u\|_{W^{1,1}(\Omega)} = \|u\|_{L^1(\Omega)} + \|\nabla u\|_{L^1(\Omega)}
+\]
+
+The first term ensures intensity fidelity by matching global tissue density. The second term, defined as the integral of the gradient magnitude, enforces structural fidelity by quantifying the cumulative sharpness of spatial transitions. This is equivalent to total variation \citep{rudin1992nonlinear}.
+
+A key theoretical result is that the embedding \(L^1(\Omega) \hookrightarrow W^{1,1}(\Omega)\) is not continuous \citep{adams2003sobolev}. This means convergence in pixel intensity does not guarantee convergence in gradients. A network can achieve arbitrarily low MAE while having arbitrarily large gradient errors. We call this the Sobolev Gap, which we formally prove in our ADL\(_1\) work. This observation motivates the need for loss functions that explicitly constrain gradients, such as the ADL\(_1\) loss proposed in this thesis.

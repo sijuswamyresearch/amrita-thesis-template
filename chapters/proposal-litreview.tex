@@ -1,0 +1,65 @@
+% chapters/proposal-litreview.tex
+% Replace the content below with your own text.
+
+\section{Literature Review}
+\label{sec:lr}
+\subsection{DL for image restoration}
+
+Ronneberger and colleagues introduced U-Net for biomedical image segmentation \citep{ronneberger2015unet}. The encoder-decoder structure with skip connections became the standard backbone for many restoration tasks. He and colleagues introduced ResNet with residual connections that allow training of very deep networks \citep{he2016deep}.
+
+For denoising, Zhang and colleagues proposed DnCNN, which learns to predict the noise residual rather than the clean image directly \citep{zhang2017beyond}. Anwar and Barnes developed RIDNet with feature attention for real image denoising \citep{anwar2019real}. Guo and colleagues introduced CBDNet for blind denoising of photographs \citep{guo2019toward}. Jin and colleagues proposed X-ReCNN specifically for chest X-ray denoising \citep{jin2019chest}.
+
+For deblurring, Nah and colleagues developed a deep multi-scale convolutional network \citep{nah2017deep}. Kupyn and colleagues introduced DeblurGAN using adversarial training \citep{kupyn2019deblurgan}. Lim and colleagues proposed EDSR, a high-capacity residual network for super-resolution, which has been adapted for medical image restoration \citep{lim2017enhanced}.
+
+Attention mechanisms have been integrated into restoration architectures. Oktay and colleagues introduced Attention U-Net, which uses gating signals derived from feature statistics to suppress irrelevant regions \citep{oktay2018attention}. Hu and colleagues proposed Squeeze-and-Excitation networks for channel-wise recalibration \citep{hu2018squeeze}. Woo and colleagues developed CBAM combining spatial and channel attention \citep{woo2018cbam}.
+
+\subsection{AFs in DL}
+
+Nair and Hinton popularised ReLU, which has become the default AF in most networks \citep{nair2010rectified}. Maas and colleagues proposed LeakyReLU to address the dying ReLU problem by allowing small negative values \citep{maas2013rectifier}. He and colleagues introduced PReLU, which learns the slope of the negative part as a parameter \citep{he2015delving}.
+
+Clevert and colleagues proposed ELU, which saturates for large negative inputs and helps reduce bias shifts \citep{clevert2015fast}. Hendrycks and Gimpel introduced GELU, which weights inputs by their cumulative distribution function \citep{hendrycks2016gaussian}.
+
+Ramachandran and colleagues searched for better AFs and proposed Swish, a smooth non-monotonic function \citep{ramachandran2017searching}. Misra proposed Mish, a self-regularised non-monotonic function \citep{misra2019mish}. Ma and colleagues proposed FReLU, which incorporates spatial context using depthwise convolutions \citep{ma2020funnel}. Despite these advances, no AF was designed specifically for medical image deblurring prior to our work.
+
+\subsection{Loss functions for image restoration}
+
+Zhao and colleagues conducted a comprehensive study of loss functions for image restoration \citep{zhao2016loss}. They found that L1 loss produces sharper results than L2 loss. Wang and colleagues introduced SSIM as a perceptual metric that correlates better with human judgment than pixel-wise error \citep{wang2004image}.
+
+Johnson and colleagues proposed perceptual losses based on deep feature similarity using pre-trained networks \citep{johnson2016perceptual}. Zhang and colleagues introduced LPIPS, which measures perceptual similarity in deep feature space and correlates well with human judgment \citep{zhang2018unreasonable}.
+
+For structural fidelity, Xue and colleagues proposed GMSD, which measures gradient magnitude similarity deviation \citep{xue2013gradient}. Ge and Dou introduced G-Loss, which approximates both image intensity and its derivative for super-resolution \citep{ge2023loss}. However, none of these losses explicitly constrains the gradient field of the output image with theoretical guarantees.
+
+\subsection{Test-time adaptation and post-processing}
+
+Classical post-processing methods include the bilateral filter \citep{tomasi1998bilateral} and anisotropic diffusion \citep{perona1990scale}. These methods smooth images while preserving edges, but they apply fixed transformations that do not adapt to individual images.
+
+Region-adaptive methods recognise that different anatomical regions require different enhancement. Sherrier and Johnson introduced regionally adaptive histogram equalisation for chest X-rays \citep{sherrier1987regionally}. Rehm and colleagues developed artifact-suppressed adaptive histogram equalisation specifically for digital chest radiographs \citep{rehm1990design}. Zuiderveld developed CLAHE, which remains widely used for contrast enhancement in medical imaging \citep{zuiderveld1994contrast}.
+
+For frequency-domain processing, Malvar and colleagues developed the low-complexity transform used in H.264 video coding, which enables efficient blockwise DCT processing \citep{malvar2003low}. Coifman and Wickerhauser introduced entropy-based basis selection and cycle spinning to reduce blocking artefacts \citep{coifman1992entropy}. Anscombe developed the variance-stabilising transformation for Poisson-distributed data, which converts signal-dependent noise into additive Gaussian noise \citep{anscombe1948transformation}.
+
+Recent test-time adaptation methods modify network weights at inference. Liang and colleagues showed that fine-tuning just the bias terms of a convolutional neural network improves denoising performance for low-dose CT \citep{liang2023segmentation}. Wen and colleagues proposed DeTTA for domain adaptation in medical image segmentation, adapting batch normalisation statistics at test time \citep{wen2024denoising}. These methods require access to the model architecture and backpropagation through the network.
+
+Metaheuristic optimisation has been applied to select enhancement parameters. Ramos-Soto and colleagues optimised Gamma correction and CLAHE parameters for chest X-ray scans using metaheuristic search \citep{ramos2025visual}. Han and colleagues developed BO-CLAHE, which uses Bayesian optimisation to automatically select CLAHE hyperparameters for neonatal chest X-rays \citep{han2025bo}. Devi and colleagues used Grey Wolf Optimisation to select clip limits for coronary angiogram enhancement \citep{devi2026metaheuristics}. These methods select a single parameter set for all images in a dataset, not per-image adaptation.
+
+\subsection{Frequency-domain and gradient-based losses}
+
+In the frequency domain, Shah and colleagues validated a Dual Domain Mix loss combining FFT constraints with perceptual metrics for microscopic image denoising \citep{shah2022impact}. Wang and colleagues proposed High-Frequency Information Loss specifically for texture generation in low-dose CT denoising \citep{wang2023self}.
+
+For gradient-based objectives, Perona and Malik formulated anisotropic diffusion where the amount of smoothing is reduced near edges \citep{perona1990scale}. However, this relies on hand-crafted rules rather than learned parameters.
+
+\subsection{Sobolev space theory for image restoration}
+
+The Sobolev space \(W^{1,1}(\Omega)\) couples pixel intensity with local geometry through the norm \(\|u\|_{W^{1,1}} = \|u\|_{L^1} + \|\nabla u\|_{L^1}\) \citep{adams2003sobolev, evans2010partial}. Standard DL objectives optimise only the first term, leaving the gradient term unconstrained.
+
+Total variation regularisation, introduced by Rudin and colleagues, enforces sparsity in the gradient domain \citep{rudin1992nonlinear}. However, it is used as a prior in classical optimisation, not as a trainable loss function in DL frameworks.
+
+The theoretical foundation for why pixel-wise losses fail to preserve edges comes from functional analysis. The embedding \(L^1(\Omega) \hookrightarrow W^{1,1}(\Omega)\) is not continuous, meaning convergence in pixel intensity does not imply convergence in gradients. This gap has not been addressed in medical image restoration prior to our work.
+
+%\subsection{Our published works}
+
+Two components of this thesis have already been completed and published.
+In our previous work, we developed X-GAN, a physics-informed generative adversarial network for chest X-ray denoising \citep{siju2026xgan}. X-GAN incorporates gradient-based edge emphasis at the generator bottleneck and a hybrid loss function combining MAE, edge loss, and SSIM. It achieves 36.48 dB PSNR and 0.721 EPI with only 2.17 million parameters. In a blinded clinical study, two radiologists gave X-GAN a diagnostic confidence score of 4.90 out of 5.
+
+We also proposed SAGA, a spatially adaptive gated AF for medical image deblurring \citep{siju2026saga}. SAGA uses local context to decide where to sharpen edges and where to suppress noise. It outperforms six existing AFs across four architectures on two modalities. The average improvement over ReLU is 6.3 dB in PSNR and 0.09 in SSIM.
+
+While X-GAN and SAGA address edge preservation in denoising and spatially adaptive activation respectively, three additional gaps remain. These are described in the following section.

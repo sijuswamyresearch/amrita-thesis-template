@@ -1,0 +1,27 @@
+% chapters/proposal-gaps.tex
+% Replace the content below with your own text.
+
+\section{Research Gaps}
+\label{sec:rg}
+
+From the literature review, we identified five specific gaps. Gaps 1 and 2 have been addressed by our published work (X-GAN and SAGA). Gaps 3, 4, and 5 motivate the planned work in Phase III.
+
+\subsection{Gap 1: Edge preservation in denoising}
+
+Existing deep denoising models for chest X-rays, including RIDNet, CBDNet, and X-ReCNN, are optimised using pixel-wise losses such as MAE or MSE. These losses minimise average pixel error but do not explicitly preserve gradients. As a result, these models produce over-smoothed outputs where fine anatomical details such as bone trabeculae and lung markings are erased. No existing model incorporates gradient-based edge preservation as an explicit physical constraint during training prior to our X-GAN work~\citep{siju2026xgan}. The Edge Preservation Index (EPI) of these models remains below 0.6, indicating significant loss of high-frequency structural information.
+
+\subsection{Gap 2: Spatially adaptive AFs}
+
+Standard AFs such as ReLU apply the same non-linearity to every spatial location. They cannot distinguish between anatomical edges that should be preserved and noise that should be suppressed. FReLU introduces spatial context using depthwise convolutions, but its max-out logic creates an absolute sparsity bottleneck and does not include an explicit gating mechanism. As a result, FReLU amplifies noise in flat regions and produces disjointed activation patterns. No AF has been designed specifically for medical image deblurring prior to our SAGA work~\citep{siju2026saga}.
+
+\subsection{Gap 3: Test-time refinement without network modification}
+
+Even physics-informed denoisers such as X-GAN are trained to minimise average error over a dataset. A model that works well on average may still produce visible artefacts on a specific patient image. Existing test-time adaptation methods modify network weights at inference, requiring access to the model architecture and backpropagation. Classical post-processing methods apply fixed transformations that do not adapt to individual images. Region-adaptive methods use intensity-based segmentation, not physics-based anatomical zones. No existing method combines test-time operation, physics-based anatomical zoning using X-ray attenuation coefficients, and interpretable difference maps.
+
+\subsection{Gap 4: Theoretical guarantees on gradient fidelity (the Sobolev gap)}
+
+Standard loss functions provide no control over gradient fidelity. We formally prove this as the Sobolev Gap: for any \(\epsilon > 0\), there exist perturbations with arbitrarily small MAE but arbitrarily large gradient error. This means a network can achieve low validation loss while producing outputs with severely degraded edges. No existing loss function for medical image restoration provides theoretical guarantees on \(W^{1,1}\) convergence. Perceptual losses such as LPIPS improve texture realism but can hallucinate artefacts. Gradient-based losses such as G-Loss approximate gradient consistency but lack a formal functional analysis foundation.
+
+\subsection{Gap 5: Architecture with gradient-guided attention}
+
+Existing attention mechanisms in U-Net variants are driven by intensity magnitude or semantic class activation. They lack an intrinsic mechanism to prioritise structural gradients. As a result, they cannot dynamically filter skip connections based on edge content. No existing architecture uses gradient-guided gating to prevent background noise from corrupting the decoder. This is particularly problematic for sparse modalities such as DXA, where the background dominates the image and standard attention mechanisms overfit to empty space.

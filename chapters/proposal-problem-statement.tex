@@ -1,0 +1,20 @@
+% chapters/proposal-problem-statement.tex
+% Replace the content below with your own text.
+
+\section{Problem Statement}
+\label{sec:rq}
+Medical image restoration methods based on DL have improved over classical approaches. However, current methods still produce outputs that are not always clinically acceptable.
+
+We identify five specific problems.
+
+{First}, denoising models such as RIDNet, CBDNet, and X-ReCNN are trained using pixel-wise losses such as MAE or MSE. These losses minimise average pixel error but do not explicitly preserve edges. As a result, the outputs appear smooth and waxy. Fine details such as bone trabeculae and lung markings are erased. This directly affects diagnosis. A radiologist cannot see a hairline fracture if the bone edge has been smoothed away.
+
+{Second}, AFs such as ReLU apply the same operation to every pixel. They cannot distinguish between edges that should be preserved and noise that should be suppressed. FReLU adds spatial context but uses a hard max operation. This creates an absolute sparsity bottleneck and amplifies noise in flat regions. No AF has been designed specifically for medical image deblurring.
+
+{Third}, even physics-informed models are trained to minimise average error over a dataset. A model that works well on average may still produce visible artefacts on a specific patient image. This is because training minimises expected error, not per-image quality. Existing test-time adaptation methods modify network weights, requiring access to the model architecture and backpropagation. Classical post-processing methods apply fixed transformations and do not adapt to individual images.
+
+Fourth, standard loss functions provide no control over gradient fidelity. We prove this formally as the Sobolev Gap. For any small pixel error, there exist images with arbitrarily large gradient errors. This means a network can achieve low validation loss while producing outputs with degraded edges. No existing loss function for medical image restoration provides theoretical guarantees on gradient preservation.
+
+{Fifth}, existing attention mechanisms in U-Net variants are driven by intensity magnitude or semantic class activation. They lack an intrinsic mechanism to prioritise structural gradients. As a result, they cannot dynamically filter skip connections based on edge content. This is particularly problematic for sparse modalities such as DXA, where the background dominates and standard attention mechanisms overfit to empty space.
+
+This thesis addresses these five problems through three phases of work. Phase I addresses the first problem. Phase II addresses the second problem. Phase III addresses the remaining three problems through two sub-objectives: Viveka for test-time refinement (third problem) and ADL\(_1\)/AG-UNet for gradient fidelity and architecture design (fourth and fifth problems).

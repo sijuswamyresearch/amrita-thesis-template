@@ -1,0 +1,17 @@
+% chapters/proposal-abstract.tex
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+Medical images acquired using X-ray and computed tomography (CT) are often degraded by acquisition noise and patient motion. This reduces diagnostic accuracy. Deep learning (DL) methods have shown promise for image restoration, but existing approaches have limitations. Standard denoisers often smooth out fine anatomical details. Most activation functions (AFs) apply the same operation everywhere, without considering local context. Even models that incorporate physics during training may leave residual artefacts because training minimises average error over a dataset, not per-image quality.
+
+This thesis addresses these limitations through a three-phase investigation.
+
+In Phase I, we developed X-GAN, a physics-informed generative adversarial network for chest X-ray denoising. X-GAN uses a U-Net generator with an edge attention mechanism that explicitly preserves anatomical boundaries. A hybrid loss function combines pixel fidelity, edge preservation, and structural similarity. X-GAN achieves a peak signal-to-noise ratio (PSNR) of 36.48 dB and an edge preservation index (EPI) of 0.721 with only 2.17 million parameters. In a downstream diagnostic task, denoising with X-GAN improved ResNet-50 accuracy from 54.55\% to 79.52\%.
+
+In Phase II, we proposed SAGA, a spatially adaptive gated AF for medical image deblurring. Unlike standard AFs such as Rectified Linear Units (ReLU), SAGA computes its output based on local spatial context. It uses a learnable gating mechanism to decide where to sharpen edges and where to suppress noise. SAGA outperforms six existing AFs across four different network architectures. On average, it improves PSNR by 6.3 dB and structural similarity (SSIM) by 0.09 over ReLU. Layer-wise relevance propagation shows that SAGA focuses network attention on diagnostically relevant boundaries.
+
+In Phase III, we plan to develop a test-time refinement framework called Viveka and a Sobolev-regularised loss function called augmented differential L1  (ADL\(_1\)) with an attention-guided U-Net (AG-UNet). Viveka will apply physics-based constraints directly at inference time. It will use frequency-domain detail extraction, anatomically adaptive gains based on X-ray attenuation coefficients, and uncertainty-weighted edge protection. Viveka will be model-agnostic and will process images in under one second on a standard CPU. The ADL\(_1\) loss will explicitly penalise gradient errors, providing mathematical guarantees on edge preservation. The AG-UNet architecture will use gradient-guided skip connections to preserve fine structural details. Preliminary experiments indicate that this framework can recover trabecular bone texture that standard losses erase.
+
+Collectively, this research bridges the gap between algorithmic performance and clinical reliability. It delivers a framework that is physics-aware, interpretable, and ready for real-world deployment.
+
+\noindent\textbf{Keywords:} keyword1, keyword2, keyword3.

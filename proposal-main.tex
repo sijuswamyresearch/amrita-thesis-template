@@ -1,0 +1,137 @@
+% ============================================================
+%  proposal-main.tex
+%  Amrita Vishwa Vidyapeetham – Thesis PROPOSAL driver
+%  ============================================================
+%  Use this file instead of main.tex when writing a Thesis
+%  Proposal (pre-qualifying / open seminar document).
+%  It uses the article class (no chapters) to match the
+%  format used in the sample proposal.
+%
+%  Compile:  pdflatex proposal-main  →  bibtex proposal-main
+%            →  pdflatex proposal-main  →  pdflatex proposal-main
+% ============================================================
+
+\documentclass[12pt,a4paper]{article}
+\renewcommand{\refname}{References}
+% ---- Load personal / document information ------------------
+\newcommand{\DocType}{proposal}
+\input{doc-info}
+
+% ---- Conditional inclusion helper --------------------------
+\usepackage{ifthen}
+\usepackage{lipsum}
+% ---- Load global configuration (only the article-compatible subset)
+\usepackage[
+  a4paper,
+  top    = 1.0in,
+  bottom = 1.0in,
+  left   = 1.25in,
+  right  = 1.0in
+]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+\usepackage[
+  colorlinks = true,
+  citecolor  = blue,
+  linkcolor  = black,
+  urlcolor   = blue
+]{hyperref}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{ifthen}
+
+% Section formatting (Amrita style – article class)
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\signaturebox}[2]{%
+  \begin{tabular}{@{}l@{}}
+    \rule{5.5cm}{0.4pt}\\
+    \textbf{#1}\\
+    #2
+  \end{tabular}}
+
+% ============================================================
+\begin{document}
+% ============================================================
+
+% ---- TITLE PAGE ----
+\pagenumbering{gobble}
+\begin{titlepage}
+  \centering
+  \vspace*{0.5cm}
+  {\Large\bfseries \DocTitle \par}
+  \vspace{1.2cm}
+  {\large\bfseries Thesis Proposal \par}
+  \vspace{1cm}
+  Submitted in partial fulfilment of the Degree of \\
+  \AuthorDegree\ under the \\
+  \FacultyName \\
+  \vspace{1cm}
+  \textit{by}\\[0.5cm]
+  {\large\bfseries \AuthorName}\\
+  {\large \AuthorRegNo}
+  \vspace{1cm}
+
+  \textit{Under the guidance of}\\[0.5cm]
+  {\large\bfseries\itshape \SupervisorName \\[0.2cm] \CoSupervisorName}
+
+  \vfill
+  \IfFileExists{\UniversityLogoPath}{%
+    \includegraphics[width=0.45\textwidth]{\UniversityLogoPath}\\[1cm]}{%
+    \textbf{[Insert university logo]}\\[1cm]}
+
+  {\large\bfseries Department of \DeptName}\\[0.1cm]
+  {\large\bfseries \MakeUppercase{\UniversityName}}\\[0.1cm]
+  {\large\bfseries \MakeUppercase{\CampusName}}\\
+  \vspace{1cm}
+  {\large \SubmissionDate}
+\end{titlepage}
+
+% ---- FRONT MATTER ------------------------------------------
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+% ---- PROPOSAL SECTIONS -------------------------------------
+% Each section is a separate file in the chapters/ folder.
+% Rename or add sections to match your proposal structure.
+
+\input{chapters/proposal-abstract}
+\newpage
+\input{chapters/proposal-introduction}
+\input{chapters/proposal-background}
+\input{chapters/proposal-litreview}
+\input{chapters/proposal-gaps}
+\input{chapters/proposal-problem-statement}
+\input{chapters/proposal-objectives}
+\input{chapters/proposal-phase1}
+\input{chapters/proposal-phase2}
+\input{chapters/proposal-phase3}
+\input{chapters/proposal-contributions}
+\input{chapters/proposal-publications}
+\input{chapters/proposal-timeline}
+
+% ---- BIBLIOGRAPHY ------------------------------------------
+\newpage
+\bibliography{references}
+
+\end{document}

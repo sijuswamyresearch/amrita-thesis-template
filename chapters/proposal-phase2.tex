@@ -1,0 +1,147 @@
+% chapters/proposal-phase2.tex
+% Replace the content below with your own text.
+
+\section{Work Completed – Phase II: SAGA}
+\label{sec:saga}
+\subsection{Objective}
+
+We proposed a spatially adaptive AF called SAGA. Unlike ReLU, which applies the same operation everywhere, SAGA uses local context to decide how to transform each pixel. We validated SAGA on two distinct medical imaging modalities: chest CT (soft tissue, continuous structures) and osteoporosis X-ray (sparse, high-frequency trabecular bone).
+
+\subsection{Methodology}
+
+Figure~\ref{fig:saga_methodology} provides an overview of the seven phases of our experimental framework.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\textwidth]{SAGA-methodology.png}
+	\caption{Seven-phase methodology of the SAGA framework. Phases 1-4 cover theoretical development and training. Phases 5-7 cover evaluation and validation.}
+	\label{fig:saga_methodology}
+\end{figure}
+
+The core of our contribution is the SAGA operator. For an input feature map \(F\), SAGA performs three operations.
+
+First, it extracts spatial context using a depthwise convolution followed by batch normalisation:
+
+\[
+T(F) = \text{BN}(\text{Conv}_{3\times3}^{\text{DW}}(F))
+\]
+
+Second, it computes a learnable gate using a pointwise convolution and a sigmoid function:
+
+\[
+G(F) = \sigma(\text{Conv}_{1\times1}(T(F)))
+\]
+
+Third, it combines the original feature map with a gated sharpening signal:
+
+\[
+\phi_{\text{SAGA}}(F) = F + G(F) \odot \text{ReLU}(T(F) - F)
+\]
+
+We proved several theoretical properties of SAGA, including non-saturation, gradient stability, and spatial adaptation.
+We evaluated SAGA on two public medical imaging datasets. The first was a large-scale CT dataset \citep{syed2024medical} containing 1,000 high-resolution chest CT scans. The second was an osteoporosis X-ray dataset \citep{wani2021knee} containing 1,000 dual-energy X-ray absorptiometry scans of the knee. For each modality, we split the data into 800 training, 100 validation, and 100 testing images. To simulate realistic acquisition artefacts, we applied three types of degradation: Gaussian blur (\(\sigma = 1.0\) to \(5.0\)), motion blur (kernel sizes 9, 15, and 21), and defocus blur (disk radius 2 to 5 pixels). From each degraded image, we extracted non-overlapping patches of size \(256 \times 256\) pixels. For training, we generated 4,000 patches. For validation and testing, we generated 500 patches each. We applied random rotations, horizontal flips, and contrast adjustments as data augmentation.
+
+We used four network architectures: VGGNet, ResNet, U-Net, and EDSR. We compared SAGA against six existing AFs: Sigmoid, Tanh, ReLU, ELU, Swish, and FReLU.
+
+\subsection{Results}
+
+We evaluated SAGA on two distinct medical imaging modalities using the VGGNet architecture. VGGNet is the simplest architecture we tested – it has no residual connections, no skip connections, and no attention mechanisms. Any improvement in deblurring quality must therefore come from the AF itself, not from architectural features compensating for a weak activation.
+
+The chest CT dataset represents soft tissue with continuous anatomical structures. The osteoporosis X-ray dataset represents sparse, high-frequency trabecular bone against a dark background. This is a more challenging task because standard AFs often smooth these fine bone details, producing a waxy appearance that erases the trabecular mesh.
+
+Table~\ref{tab:saga_comparison} compares SAGA against six existing AFs on both modalities using the VGGNet architecture.
+
+\begin{table}[H]
+	\centering
+	\caption{Performance comparison of AFs on chest CT and osteoporosis X-ray deblurring using the VGGNet architecture. Values are PSNR (dB) and SSIM.}
+	\label{tab:saga_comparison}
+	\begin{tabular}{lcccc}
+		\toprule
+		\multirow{2}{*}{AF} & \multicolumn{2}{c}{Chest CT} & \multicolumn{2}{c}{Osteoporosis X-ray} \\
+		\cline{2-5}
+		& PSNR & SSIM & PSNR & SSIM \\
+		\midrule
+		Sigmoid & 26.45 & 0.74 & 35.82 & 0.88 \\
+		Tanh & 30.91 & 0.84 & 35.81 & 0.87 \\
+		ReLU & 26.45 & 0.73 & 36.13 & 0.88 \\
+		ELU & 31.35 & 0.85 & 44.56 & 0.90 \\
+		Swish & 26.44 & 0.74 & 36.02 & 0.88 \\
+		FReLU & 35.60 & 0.93 & 44.84 & 0.95 \\
+		\textbf{SAGA} & \textbf{37.16} & \textbf{0.96} & \textbf{50.33} & \textbf{0.98} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+On the chest CT dataset, SAGA achieves 37.16 dB PSNR and 0.96 SSIM, outperforming the next best method FReLU by 1.56 dB. On the more challenging osteoporosis dataset, the improvement is even larger. SAGA reaches 50.33 dB PSNR and 0.98 SSIM, which is 5.49 dB higher than FReLU and 14.2 dB higher than ReLU.
+
+These results are particularly significant because they were obtained using VGGNet, the simplest architecture in our evaluation. Since VGGNet has no residual connections or skip connections to compensate for a weak AF, the improvement must come from SAGA's design itself. The spatial gating mechanism successfully distinguishes between diagnostically relevant edges and noise, even in sparse bone structures where other activations fail.
+
+We also validated SAGA on three additional architectures – ResNet, U-Net, and EDSR – and observed consistent improvements across all of them. The complete results are reported in our published paper \citep{siju2026saga}. The average improvement of SAGA over ReLU across all four architectures and both modalities was 6.3 dB in PSNR and 0.09 in SSIM.
+
+\subsubsection{Summary across architectures and modalities}
+
+While the VGGNet results isolate the effect of the AF itself, we also validated SAGA on three additional architectures: ResNet, U-Net, and EDSR. Table~\ref{tab:saga_summary} summarises the performance across all four architectures and both datasets.
+
+\begin{table}[H]
+	\centering
+	\caption{Summary of SAGA performance across architectures and modalities. Values are PSNR (dB) with SSIM in parentheses. The best baseline AF for each configuration is shown in brackets.}
+	\label{tab:saga_summary}
+	\begin{tabular}{lcccc}
+		\toprule
+		\multirow{2}{*}{Architecture} & \multicolumn{2}{c}{Chest CT} & \multicolumn{2}{c}{Osteoporosis} \\
+		\cline{2-5}
+		& Best Baseline & SAGA & Best Baseline & SAGA \\
+		\midrule
+		VGGNet & 35.60 (0.93) [FReLU] & \textbf{37.16 (0.96)} & 44.84 (0.95) [FReLU] & \textbf{50.33 (0.98)} \\
+		ResNet & 31.39 (0.85) [ReLU] & \textbf{34.93 (0.93)} & 46.79 (0.95) [ReLU] & \textbf{48.82 (0.97)} \\
+		U-Net & 34.01 (0.90) [FReLU] & \textbf{36.33 (0.95)} & 42.21 (0.92) [FReLU] & \textbf{44.86 (0.94)} \\
+		EDSR & 34.43 (0.91) [FReLU] & \textbf{38.05 (0.96)} & 43.72 (0.91) [ReLU] & \textbf{47.97 (0.97)} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Across all four architectures and both modalities, SAGA consistently outperforms the best baseline AF in every configuration. The average improvement over ReLU across all experiments was 6.3 dB in PSNR and 0.09 in SSIM. The improvement is largest on the challenging osteoporosis dataset, where fine trabecular details are easily lost. This confirms that SAGA's spatial gating mechanism generalises across architectures, from simple plain networks (VGGNet) to deep residual networks (ResNet, EDSR) and encoder-decoder structures (U-Net).
+
+\subsubsection{Interpretability analysis}
+
+We performed an interpretability analysis using layer-wise relevance propagation (LRP) \citep{montavon2018methods} and K-path visualisation \citep{bhati2025neural} on the ResNet backbone.
+
+LRP decomposes the network's prediction into pixel-wise relevance scores. The Edge Concentration Score (ECS) measures how tightly these relevance scores are focused on anatomical boundaries. A higher ECS indicates that the network is paying attention to diagnostically relevant structures rather than scattering attention across the image.
+
+After identifying the most important neurons using the GetOptimiser algorithm \citep{bhati2025neural}, we reconstructed the output using only these selected pathways. The Reconstruction MSE measures pixel-wise error between the full model output and the sparse reconstruction. The Reconstruction  Symmetric Mean Absolute Percentage Error (SMAPE) measures relative error as a percentage. Lower values in both metrics indicate that the selected neurons faithfully preserve the original prediction – meaning the network has efficient, non-redundant internal representations.
+
+Table~\ref{tab:saga_lrp} compares these metrics across ReLU, FReLU, and SAGA.
+
+\begin{table}[H]
+	\centering
+	\caption{LRP-based interpretability metrics. ECS measures spatial focus (higher is better). Reconstruction MSE and SMAPE measure how faithfully the selected neurons preserve the output (lower is better).}
+	\label{tab:saga_lrp}
+	\begin{tabular}{lccc}
+		\toprule
+		Metric & ReLU & FReLU & SAGA \\
+		\midrule
+		Edge Concentration Score (ECS) ↑ & 0.2279 & 0.2345 & \textbf{0.2506} \\
+		Reconstruction MSE ↓ & 0.0186 & 0.0161 & \textbf{0.0130} \\
+		Reconstruction SMAPE ↓ & 28.25\% & 28.84\% & \textbf{24.96\%} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+SAGA achieves a significantly higher ECS than both ReLU (\(p = 0.0298\)) and FReLU (\(p = 0.037\)). This means SAGA focuses network attention on diagnostically relevant boundaries such as the pleural wall and central vessels, rather than scattering attention across the image.
+
+Despite operating at the same sparsity level (approximately 26\% of neurons active), SAGA's selected pathways reconstruct the output with 30.1\% lower MSE than ReLU and 19.3\% lower MSE than FReLU. The SMAPE values confirm this improvement: SAGA achieves 24.96\% relative error, compared to 28.25\% for ReLU and 28.84\% for FReLU. This indicates that SAGA packs more diagnostic information into each active neuron – its internal representations are more efficient and less redundant than those of baseline AFs.
+
+Figure~\ref{fig:saga_lrp_kpath} visualises the LRP heatmaps and K-path activations for all three AFs.
+The visualisation confirms the quantitative findings. ReLU produces scattered, diffuse relevance maps, indicating poor anatomical focus. FReLU improves slightly but exhibits isolated pixel hotspots due to its hard thresholding operation – a phenomenon called the absolute sparsity bottleneck. SAGA, in contrast, generates continuous edge-focused relevance along the pleural wall and central vessels. The K-path visualisations further reveal that SAGA achieves genuine feature disentanglement: distinct pathways specialise in texture extraction, boundary detection, and background suppression. ReLU and FReLU, by comparison, show redundant or disjointed activation patterns.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{SAGA-LRP-Kpath.png}
+	\caption{LRP and K-Path analysis comparing AFs. (a) Input CT image. (b-d) LRP heatmaps: (b) ReLU, (c) FReLU, (d) SAGA. (e-m) Top-3 K-Path visualisations for (e-g) ReLU, (h-j) FReLU, and (k-m) SAGA. SAGA produces continuous edge-focused relevance (d) with spatially separated pathways (k-m), unlike the diffuse ReLU (b,e-g) and sparse FReLU (c,h-j) patterns.}
+	\label{fig:saga_lrp_kpath}
+\end{figure}
+
+
+
+\subsection{Conclusion of phase II}
+
+SAGA is a spatially adaptive AF that can be added to existing architectures without other changes. On the osteoporosis dataset, SAGA achieved 50.33 dB PSNR and 0.98 SSIM using VGGNet – 14.2 dB higher than ReLU. Across all four architectures and both modalities, the average improvement over ReLU was 6.3 dB in PSNR and 0.09 in SSIM. LRP analysis showed that SAGA's active neurons carry more useful information than ReLU (30.1\% lower reconstruction MSE at the same sparsity level). These results show that designing better AFs is an alternative to making networks deeper.

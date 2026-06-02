@@ -1,0 +1,34 @@
+% chapters/proposal-objectives.tex
+% Replace the content below with your own text.
+
+\section{Research Objectives}
+\label{sec:ro}
+
+This thesis has four objectives, organised into three phases. Phase III is split into two sub-objectives.
+
+\subsection{Phase I objective (Completed)}
+
+Design a physics-informed generative model that denoises chest X-rays while preserving anatomical edges. The model must meet three criteria. First, it must achieve higher EPI than existing methods such as X-ReCNN. Second, it must be lightweight enough for clinical deployment (under 5 million parameters). Third, it must improve downstream classification accuracy compared to using noisy images.
+
+We call this model X-GAN.
+
+\subsection{Phase II objective (Completed)}
+
+Formulate a spatially adaptive AF that improves deblurring by applying different operations to edges and flat regions. The function must meet three criteria. First, it must work as a drop-in replacement for ReLU in existing architectures. Second, it must outperform existing AFs on both CT and osteoporosis datasets. Third, its internal representations must be interpretable, meaning network attention should focus on anatomical boundaries.
+
+We call this function SAGA.
+
+\subsection{Phase III-A objective (Planned – Viveka)}
+
+Develop a test-time refinement framework that applies physics-based constraints directly to denoised images without modifying network weights. The framework must meet three criteria. First, it must process images in under one second on a standard CPU. Second, it must produce interpretable difference maps showing where the image was enhanced or suppressed. Third, it must improve perceptual quality for over-smoothed denoisers without degrading already-good outputs.
+
+We call this framework Viveka.
+
+\subsection{Phase III-B objective (Planned – ADL\_1 and AG-UNet)}
+
+Develop a Sobolev-regularised loss function and an attention-guided U-Net architecture that work together to preserve fine structural details. The loss function must provide theoretical guarantees on gradient fidelity. The architecture must use gradient-guided gating to filter skip connections. Together, they must achieve higher EPI than MAE-trained models at comparable PSNR.
+
+We call the loss function ADL\(_1\) and the architecture AG-UNet.
+
+
+
