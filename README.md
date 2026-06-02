@@ -26,14 +26,14 @@ Everything else — title page, certificate, declaration, abstract header — is
 |---------------------|------------------------|
 | Final Thesis        | `main.tex`              |
 | Thesis Proposal     | `proposal-main.tex`     |
-| Synopsis            | `main.tex` (set `\DocType{synopsis}` in `doc-info.tex`) |
+| Synopsis            | `synopsis-main.tex`  |
 | Project Report      | `main.tex` (set `\DocType{report}`)  |
 
 ### 3. Write your content
 
 | File | What to edit |
 |------|-------------|
-| `frontmatter/abstract.tex` | Abstract body |
+| `frontmatter/abstract-body.tex` | Abstract body |
 | `frontmatter/acknowledgements.tex` | Acknowledgements |
 | `frontmatter/abbreviations.tex` | Your acronyms |
 | `chapters/ch01-introduction.tex` | Chapter 1 |
@@ -46,12 +46,7 @@ Everything else — title page, certificate, declaration, abstract header — is
 | `references.bib` | BibTeX references |
 | `images/` | All figures and logos |
 
-### 4. Add your university logo
-
-Copy the Amrita logo to `images/amrita-logo.png`.
-(Official logo available at https://amrita.edu)
-
-### 5. Compile
+### 4. Compile
 
 ```bash
 pdflatex main        # or: pdflatex proposal-main
@@ -74,6 +69,8 @@ amrita-thesis-template/
 │
 ├── main.tex                   ← Thesis / Synopsis / Report driver
 ├── proposal-main.tex          ← Thesis Proposal driver
+├── synopsis-main.tex          ← synopsis driver
+├── form7a-abstract.tex        ← abstract generator as per guidelines (form 7a)
 ├── doc-info.tex               ← ★ YOUR PERSONAL INFO (edit only this)
 ├── references.bib             ← BibTeX bibliography
 │
@@ -85,7 +82,7 @@ amrita-thesis-template/
 │   ├── certificate.tex        ← Auto-generated
 │   ├── declaration.tex        ← Auto-generated
 │   ├── dedication.tex         ← Auto-generated (suppressed if blank)
-│   ├── abstract.tex           ← Edit this
+│   ├── abstract.body           ← Edit this
 │   ├── acknowledgements.tex   ← Edit this
 │   └── abbreviations.tex      ← Edit this
 │
@@ -96,6 +93,7 @@ amrita-thesis-template/
 │   ├── ch04-results.tex
 │   ├── ch05-conclusion.tex
 │   └── proposal-*.tex         ← Proposal-specific sections
+|   └── synopsis-*.tex         ← synopsis-specific sections
 │
 ├── backmatter/
 │   ├── publications.tex
@@ -103,7 +101,7 @@ amrita-thesis-template/
 │
 └── images/
     ├── README.md
-    └── amrita-logo.png        ← Add your logo here
+    └── amrita-logo.png        ← Add your images iside this folder
 ```
 
 ---
