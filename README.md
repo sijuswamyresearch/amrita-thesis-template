@@ -4,13 +4,6 @@
        style="width: 100%; height: auto; max-width: 1000px; display: block; margin: 0 auto;">
 </div>
 
-
-
-# Amrita Vishwa Vidyapeetham — Doctoral Document LaTeX Template
-
-A modular, plug-and-play LaTeX template for **PhD Thesis Proposals, Synopses,
-Project Reports, and Final Thesis** at Amrita Vishwa Vidyapeetham.
-
 ---
 
 ## Quick Start
