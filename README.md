@@ -82,7 +82,8 @@ amrita-thesis-template/
 │   ├── certificate.tex        ← Auto-generated
 │   ├── declaration.tex        ← Auto-generated
 │   ├── dedication.tex         ← Auto-generated (suppressed if blank)
-│   ├── abstract.body           ← Edit this
+│   ├── abstract-body.tex      ← Edit this
+|   ├── abstract.tex           ← Auto-generated in required format using the abstract-body.tex
 │   ├── acknowledgements.tex   ← Edit this
 │   └── abbreviations.tex      ← Edit this
 │
